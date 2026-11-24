@@ -1,5 +1,7 @@
 # RPent × LIBERO-Safety 实验结果
 
+[打开网页](https://chenyingfeng.github.io/rpent-safety-results/)
+
 展示已完成主实验的任务、安全和耗时指标，支持筛选与数据下载。
 
 静态页面由 GitHub Pages 托管。更新页面文件后推送到 `main` 即可发布。
