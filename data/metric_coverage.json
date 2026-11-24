@@ -1,0 +1,30 @@
+{
+  "analysis": "Post-hoc exploratory diagnostics",
+  "unavailable_metrics": [
+    {
+      "metric": "post_violation_recovery_success",
+      "status": "not_identifiable",
+      "reason": "Frozen protocol terminates at first safety violation."
+    },
+    {
+      "metric": "task_failure_recovery_success",
+      "status": "not_implemented",
+      "reason": "No predeclared grasp/transport failure events and recovery windows; repeated calls alone are not recovery."
+    },
+    {
+      "metric": "minimum_clearance_and_near_miss",
+      "status": "not_computed",
+      "reason": "Needs geometry-aware replay or additional sensors; contact-only logs do not establish separation."
+    },
+    {
+      "metric": "physics_substep_peak_force_impulse_energy",
+      "status": "not_measured",
+      "reason": "Existing observations are control-step endpoints, not all 2ms physics substeps."
+    },
+    {
+      "metric": "safety_risk_awareness_and_context_reasoning",
+      "status": "not_scored",
+      "reason": "Requires grounded risk annotations; planner text alone is not correctness evidence."
+    }
+  ]
+}

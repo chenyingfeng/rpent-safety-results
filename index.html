@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Agent-Native Embodied Safety：RPent × LIBERO-Safety 的真实仿真结果、扩展安全指标、逐回合对照与评测协议。">
+<meta name="theme-color" content="#f5f7fb"><title>Agent-Native Embodied Safety · 实验结果</title>
+<link rel="stylesheet" href="styles.css"><script src="app.js" defer></script>
+</head>
+<body>
+<a class="skip" href="#main">跳转到结果</a>
+<header class="topbar"><a class="brand" href="#main"><span class="brand-symbol" aria-hidden="true">⎔</span><span>Embodied Safety<span class="brand-sub">RESEARCH OBSERVATORY</span></span></a><nav aria-label="页面导航"><a href="#overview">总览</a><a href="#metrics">指标</a><a href="#risks">风险分类</a><a href="#episodes">回合对照</a><a href="#protocol">协议与边界</a></nav><a class="text-link desktop-link" href="data/metric_comparison.csv" download>下载数据 <span aria-hidden="true">↓</span></a></header>
+<main id="main">
+<section class="hero">
+<div class="eyebrow"><span class="tag">实验快照 · 2026.11.22</span><span>RPent × LIBERO-Safety</span></div>
+<h1>Agent 更能完成任务，<br><span>也就更安全吗？</span></h1>
+<div class="hero-bottom"><p>固定同一 π₀.₅ 策略，在真实仿真执行中，比较 VLA-only 与 Astra low + RPent 的任务表现、安全风险和执行代价。</p><div class="study-stamp"><span class="status-pill">本轮已收尾</span><span>419 有效回合 · 209 完整配对</span><small>探索性研究 · 非官方等价复现</small></div></div>
+</section>
+<section class="scope-panel" aria-label="比较范围">
+<div class="scope-heading"><h2>选择比较范围</h2><button class="subtle-button" id="resetFilters">重置筛选</button></div>
+<div class="filter-grid">
+<label>评分实现<select id="scoring"><option value="audited">审计修正版</option><option value="upstream">上游原始评分</option></select></label>
+<label>初始状态覆盖<select id="cohort"><option value="all">全部已完成配对</option><option value="12">第一轮 · init 12（完整任务覆盖）</option><option value="13">第二轮 · init 13（部分任务覆盖）</option></select></label>
+<label>风险类别<select id="suite"><option value="all">全部风险类别</option><option value="affordance">Affordance · 操作语义</option><option value="human_safety">Human safety · 人体安全</option><option value="obstacle_avoidance">Obstacle avoidance · 避障</option><option value="obstacle_avoidance_human">Obstacle + human · 人体避障</option></select></label>
+<label>任务等级<select id="level"><option value="all">全部等级</option><option value="0">L0</option><option value="1">L1</option><option value="2">L2</option></select></label>
+</div><p id="scopeNote" class="scope-note" aria-live="polite">正在读取已完成的实验数据…</p>
+</section>
+<div id="loadError" class="notice danger" hidden></div>
+<section id="overview" class="section">
+<div class="section-title"><div><span class="eyebrow">PAIRED COMPARISON</span><h2>完整系统的对照，而非单一模型评分</h2></div><div class="legend"><span><i class="vla-dot"></i>VLA-only</span><span><i class="agent-dot"></i>Astra + RPent</span></div></div>
+<div id="kpis" class="kpi-grid"></div>
+<div class="chart-grid"><article class="panel"><div class="panel-heading"><h3>任务与安全，放在一起看</h3><span class="muted">回合占比</span></div><div id="outcomes"></div><div class="outcome-legend"><span><i class="outcome-success"></i>达成目标，无违规</span><span><i class="outcome-unfinished"></i>未完成，无违规</span><span><i class="outcome-violation"></i>出现违规</span></div><p class="chart-caption">“未观测到违规”不等于完成了安全任务，也不证明未执行的后续动作安全。</p></article><article class="panel"><div class="panel-heading"><h3>真实时间成本</h3><span class="muted">平均秒数</span></div><div id="latency"></div><p class="chart-caption">同时记录 wall-clock 与仿真时间。规划期间仿真暂停，等待时间不等于物理风险暴露。</p></article></div>
+<div class="finding" id="finding" aria-live="polite"></div>
+</section>
+<section id="metrics" class="section">
+<div class="section-title"><div><span class="eyebrow">BEYOND SUCCESS / FAILURE</span><h2>扩展指标，不止一个 0 或 1</h2><p>每项结果附带分母和统计口径；未测量与不适用不会补成零。</p></div><button class="button secondary" id="downloadFiltered">下载当前指标 CSV</button></div>
+<div class="tabs" role="tablist" aria-label="指标分类"><button role="tab" aria-selected="true" data-group="safety">安全与结果</button><button role="tab" aria-selected="false" data-group="behavior">执行与停止</button><button role="tab" aria-selected="false" data-group="timing">真实耗时</button><button role="tab" aria-selected="false" data-group="motion">运动与接触</button></div>
+<div class="table-panel"><table id="metricTable"><thead><tr><th scope="col">指标 / 口径</th><th scope="col"><span class="vla-text">VLA-only</span></th><th scope="col"><span class="agent-text">Astra + RPent</span></th></tr></thead><tbody id="metricBody"></tbody></table></div>
+<p class="footnote" id="metricFootnote"></p>
+</section>
+<section id="risks" class="section"><div class="section-title"><div><span class="eyebrow">FAILURE DISTRIBUTION</span><h2>风险发生在哪里</h2><p>按任务类别比较成功与违规；等级和初始状态筛选保持一致。</p></div></div><div id="riskGrid" class="risk-grid"></div></section>
+<section id="episodes" class="section"><div class="section-title"><div><span class="eyebrow">EPISODE EXPLORER</span><h2>回到每一组真实执行</h2><p>查看相同任务与初始状态下，两种系统如何结束。点击回合展开执行摘要。</p></div><label class="search-label"><span class="sr-only">搜索任务</span><input id="search" type="search" placeholder="搜索任务名称或任务 ID" autocomplete="off"></label></div>
+<div class="episode-tools"><div class="chips" aria-label="筛选回合结果"><button class="chip active" data-case="all" aria-pressed="true">全部</button><button class="chip" data-case="agent_loses" aria-pressed="false">仅 VLA 成功</button><button class="chip" data-case="agent_wins" aria-pressed="false">仅 Agent 成功</button><button class="chip" data-case="violation" aria-pressed="false">存在违规</button><button class="chip" data-case="early" aria-pressed="false">Agent 提前结束</button></div><span class="muted" id="caseCount"></span></div>
+<div class="table-panel"><table class="episode-table"><thead><tr><th>任务 / 初始状态</th><th>VLA-only</th><th>Astra + RPent</th><th>执行步数<br><small>VLA / Agent</small></th><th>回合耗时<br><small>VLA / Agent</small></th><th><span class="sr-only">详情</span></th></tr></thead><tbody id="episodeBody"></tbody></table></div><div class="pagination"><button id="prevPage" class="subtle-button">上一页</button><span id="pageNumber"></span><button id="nextPage" class="subtle-button">下一页</button></div>
+</section>
+<section class="section" id="captures"><div class="section-title"><div><span class="eyebrow">RECORDED OBSERVATIONS</span><h2>来自执行记录的观察图像</h2><p>以下为确定性选取的示例，不代表总体分布。图像不保证与终止时刻同步，不能替代轨迹审查。</p></div></div><div id="captureGrid" class="capture-grid"></div></section>
+<section id="protocol" class="section"><div class="section-title"><div><span class="eyebrow">PROTOCOL & EVIDENCE</span><h2>结果的来源与边界</h2><p>保留实验条件和无法回答的问题，方便复核与后续研究。</p></div><span class="tag">冻结研究协议 v4</span></div>
+<div class="protocol-grid"><article class="panel"><h3>相同条件与系统差异</h3><dl class="protocol-list"><div><dt>固定策略</dt><dd>π₀.₅ · LIBERO-Safety 官方微调权重</dd></div><div><dt>基础模型</dt><dd>gpt-6-astra · reasoning effort: low</dd></div><div><dt>Harness</dt><dd>RPent · upstream_full</dd></div><div><dt>动作与预算</dt><dd>1000 控制步；chunk 10；denoising 10；settling 0</dd></div><div><dt>Agent 限制</dt><dd>最多 50 轮；规划超时 600 秒</dd></div><div><dt>采样</dt><dd>控制频率 20 Hz；物理步长 0.002 秒</dd></div><div><dt>终止规则</dt><dd>首次安全违规即终止</dd></div><div><dt>记忆</dt><dd>每回合使用新的冻结记忆副本，保留原始指南</dd></div></dl><p class="chart-caption">Agent 使用额外感知和脚本工具。这是完整系统对比，不能单独归因于基础模型本体。</p></article>
+<article class="panel"><h3>如何阅读这批结果</h3><div class="protocol-notes"><p><strong>不是官方等价复现。</strong>1000 步等配置属于冻结研究协议，尚未确认与官方完整评测协议等价；这里也没有把 LIBERO-PRO 的成绩当成 LIBERO-Safety 成绩。</p><p><strong>两套评分分别执行。</strong>上游原始 cost 存在碰撞漏检；审计版修正约束检查路径并保留阈值。两者是不同评分实现，不混合统计。</p><p><strong>覆盖不完全均衡。</strong>第一轮覆盖全部 60 个任务；第二轮完成 45 个。合并结果与完整第一轮均可单独查看。</p><p><strong>异常不算能力失败。</strong>1 个执行 847 步后超时的回合单列，未纳入配对；另有 1 个有效回合因此缺少有效对照。</p><p><strong>新增指标为探索性分析。</strong>指标在查看早期结果后补充，不宣称预注册，也不修改已执行的控制策略。</p></div></article></div>
+<div class="panel coverage"><h3>尚未得到的指标</h3><div class="coverage-grid"><div><span class="availability">协议不支持</span><h4>违规后的恢复</h4><p>首次违规即终止，无法观察碰撞后的恢复过程。</p></div><div><span class="availability">未实现评分</span><h4>任务失败恢复 / 风险识别</h4><p>需要预定义失败事件、恢复窗口及风险真值标注；不能用重复调用或模型自述替代。</p></div><div><span class="availability">需要重放或新增采样</span><h4>Near-miss / 最小安全距离</h4><p>接触日志不能完整描述尚未接触时的距离。</p></div><div><span class="availability">采样不足</span><h4>物理峰值力 / 冲量 / 能量</h4><p>控制步末端记录不覆盖每个 2 ms 物理子步。</p></div></div></div>
+<div class="provenance-line"><span>来源：overnight_20261121_v4 · 2026-11-22 05:35 收尾</span><span>条件不一致 0 · 冻结代码漂移 0 · 读取错误 0</span></div>
+</section>
+<section class="download-panel"><div><span class="eyebrow">REPRODUCIBLE SNAPSHOT</span><h2>数据、口径与每一组对照</h2><p>下载同一份快照。缺失指标保持缺失，技术异常单独说明。</p></div><div class="download-links"><a class="button primary" href="data/metric_comparison.csv" download>全部指标 CSV</a><a class="button secondary" href="data/results.json" download>配对数据 JSON</a><a class="button secondary" href="data/metric_coverage.json" download>指标覆盖说明</a></div></section>
+<footer><span>Agent-Native Embodied Safety · Research snapshot</span><div><a href="https://github.com/RLinf/RPent" target="_blank" rel="noopener">RPent</a><a href="https://github.com/LIBERO-SAFETY/LIBERO-Safety" target="_blank" rel="noopener">LIBERO-Safety</a><button class="subtle-button" id="printPage">打印 / 保存 PDF</button></div></footer>
+</main>
+<dialog id="episodeDialog"><div class="dialog-header"><span class="eyebrow">PAIRED EPISODE</span><button class="close-dialog" id="closeDialog" aria-label="关闭详情">×</button></div><div id="dialogContent"></div></dialog>
+</body></html>
